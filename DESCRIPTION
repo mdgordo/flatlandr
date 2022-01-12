@@ -5,11 +5,11 @@ Authors@R:
     person(given = "Matthew",
            family = "Gordon",
            role = c("aut", "cre"),
-           email = "mdgordo@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "mdgordo@gmail.com")
 Description: Chebyshev polynomial interpolation in 2 dimensions.
 License: MIT + file LICENSE
-Imports: tidyverse
+Imports: 
+    tidyr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
