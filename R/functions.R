@@ -64,8 +64,9 @@ chebcoefs <- function(fy, degree = 5){
   coefmat = matrix(NA, nrow = degree+1, ncol = degree+1)
   for (i in c(1:(degree+1))) {
     for (j in c(1:(degree+1))) {
-      tvec = Tmat[,i] * Tmat[,j]
-      coefmat[i, j] = sum(fy %*% tvec)/((sum(Tmat[,i]^2))*(sum(Tmat[,j]^2)))
+      n = sum(sapply(c(1:length(z)), function(k) sum(fy[,k]*Tmat[k,i]*Tmat[,j])))
+      d = sum(Tmat[,i]^2)*sum(Tmat[,j]^2)
+      coefmat[i, j] = n/d
     }
   }
   return(coefmat)
@@ -84,7 +85,9 @@ chebcoefs <- function(fy, degree = 5){
 chebpred <- function(x0, y0, coefmat, lb, ub){
   xp = 2*(x0 - lb[1])/(ub[1] - lb[1]) - 1
   yp = 2*(y0 - lb[2])/(ub[2] - lb[2]) - 1
-  Tix = chebeval(xp, degree = dim(coefmat)[1])
-  Tij = chebeval(yp, degree = dim(coefmat)[1])
-
+  degree = dim(coefmat)[1] - 1
+  Tix = as.vector(chebeval(xp, degree))
+  Tij = as.vector(chebeval(yp, degree))
+  pxy = sum(sapply(c(1:(degree)), function(i) sum(cmat[i,]*Tix[i]*Tij)))
+  return(pxy)
 }
