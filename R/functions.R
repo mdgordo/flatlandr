@@ -4,9 +4,10 @@
 #' @return a vector of m nodes on \[-1,1]
 #' @export
 
-chebnodes <- function(m){
+chebnodes <- function(m, lb = -1, ub = 1){
   k = seq(1, m, 1)
   z = -cos(pi*(2*k - 1)/(2*m))
+  z = (z+1)*(ub - lb)/2 + lb
   return(z)
 }
 
