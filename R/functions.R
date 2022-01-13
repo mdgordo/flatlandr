@@ -89,6 +89,6 @@ chebpred <- function(x0, y0, coefmat, lb, ub){
   degree = dim(coefmat)[1] - 1
   Tix = as.vector(chebeval(xp, degree))
   Tij = as.vector(chebeval(yp, degree))
-  pxy = sum(sapply(c(1:(degree)), function(i) sum(cmat[i,]*Tix[i]*Tij)))
+  pxy = sum(sapply(c(1:(degree)), function(i) sum(coefmat[i,]*Tix[i]*Tij)))
   return(pxy)
 }
