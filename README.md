@@ -6,8 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package provides functions for chebyshev interpolation in 2
-dimensions
+This package provides functions for interpolation in 2 dimensions
 
 ## Installation
 
@@ -30,7 +29,7 @@ fxy <- function(x, y) {
   return(r)
 }
 
-### create 10 nodes in each dimension on (0,10) and (5,15)
+### create 10 chebyshev nodes in each dimension on (0,10) and (5,15)
 lb = c(1,5)
 ub = c(10,15)
 ss = chebstatespace(10, lb, ub)
@@ -55,8 +54,8 @@ Test and plot interpolations vs true value
 library(tidyverse)
 #> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
 #> ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
-#> ✓ tibble  3.1.3     ✓ dplyr   1.0.7
-#> ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+#> ✓ tibble  3.1.6     ✓ dplyr   1.0.7
+#> ✓ tidyr   1.1.4     ✓ stringr 1.4.0
 #> ✓ readr   1.4.0     ✓ forcats 0.5.1
 #> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 #> x dplyr::filter() masks stats::filter()
@@ -69,17 +68,35 @@ df.test$ytrue <- mapply(fxy, df.test$x, df.test$y)
 df.test$yinterp <- mapply(chebpred, x = df.test$x, y = df.test$y, coefmat = list(cmat), lb = list(lb), ub = list(ub))
 
 ggplot(df.test) + 
-  geom_tile(aes(x = x, y = y, fill = ytrue))
+  geom_tile(aes(x = x, y = y, fill = ytrue)) + scale_fill_viridis_c()
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 ``` r
 ggplot(df.test) + 
-  geom_tile(aes(x = x, y = y, fill = yinterp))
+  geom_tile(aes(x = x, y = y, fill = yinterp)) + scale_fill_viridis_c()
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-2.png" width="100%" />
+Simplical and Bilinear Interpolation
+
+``` r
+x <- c(200, 300)
+y <- c(40, 45)
+df.test2 <- crossing(x, y)
+df.test2$vfx <- mapply(fxy, df.test2$x, df.test2$y)
+
+df.interp <- crossing(x = seq(200, 300, 1), y = seq(40, 45, .05))
+
+df.interp$pred_bi <- mapply(simplr, x0 = df.interp$x, y0 = df.interp$y, 
+                            x = list(df.test2$x), y = list(df.test2$y), vfx = list(df.test2$vfx), method = "bilinear")
+
+ggplot(df.interp) + 
+  geom_tile(aes(x = x, y = y, fill = pred_bi)) + scale_fill_viridis_c()
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 Reference: Judd, Kenneth. (1998). “Numerical Methods in Economics.” MIT
-Press. p238.
+Press. ch6.
