@@ -4,7 +4,7 @@
 \alias{chebnodes}
 \title{Function for creating chebyshev nodes in 1 dimension}
 \usage{
-chebnodes(m)
+chebnodes(m, lb = -1, ub = 1)
 }
 \arguments{
 \item{m}{a double - the number of nodes to create}

@@ -92,3 +92,49 @@ chebpred <- function(x0, y0, coefmat, lb, ub){
   pxy = sum(sapply(c(1:(degree)), function(i) sum(coefmat[i,]*Tix[i]*Tij)))
   return(pxy)
 }
+
+#' Function for bilinear and simplical interpolation
+#'
+#' @param x0 coordinate for interpolation
+#' @param y0 coordinate for interpolation
+#' @param x vector of x coordinates with known function values
+#' @param y vector of y coordinates with known function values
+#' @param vfx function values at each (x,y). Note x and y must form a crossing - must have function values at each possible combination
+#' @param method string either "bilinear" or "simplical"
+#' @return interpolated value at x0 and y0
+#' @export
+
+simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
+  ## find closest points
+  xvals = sort(unique(x))
+  xi = findInterval(x0, xvals, all.inside = TRUE)
+  x1 = xvals[xi]
+  x2 = xvals[xi+1]
+  yvals = sort(unique(y))
+  yi = findInterval(y0, yvals, all.inside = TRUE)
+  y1 = yvals[yi]
+  y2 = yvals[yi+1]
+
+  ## function vals at corners
+  v1 = vfx[which(x==x1 & y==y1)]
+  v2 = vfx[which(x==x1 & y==y2)]
+  v3 = vfx[which(x==x2 & y==y1)]
+  v4 = vfx[which(x==x2 & y==y2)]
+
+  if (method=="bilinear") {
+    ## change of variables
+    xp = -1 + 2*(x0-x1)/(x2-x1)
+    yp = -1 + 2*(y0-y1)/(y2-y1)
+    vp = .25*(v1*(1-xp)*(1-yp) + v2*(1-xp)*(1+yp) + v3*(1+xp)*(1-yp) + v4*(1+xp)*(1+yp))
+  } else {
+    ### change of variables
+    xp = (x0-x1)/(x2-x1)
+    yp = (y0-y1)/(y2-y1)
+    if (xp+yp <= 1) {
+      vp = v1*(1-xp-yp) + v2*yp + v3*xp
+    } else {
+      vp = v2*(1-xp) + v3*(1-yp) + v4*(xp+yp-1)
+    }
+  }
+  return(vp)
+}
