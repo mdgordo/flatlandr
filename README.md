@@ -6,7 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package provides functions for interpolation in 2 dimensions
+This package provides functions for interpolation in multiple
+dimensions. Currently under development.
 
 ## Installation
 
