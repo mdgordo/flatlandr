@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{simplr}
 \alias{simplr}
-\title{Function for bilinear and simplical interpolation}
+\title{Function for bilinear and simplical interpolation in 2D}
 \usage{
 simplr(x0, y0, x, y, vfx, method = "bilinear")
 }
@@ -23,5 +23,5 @@ simplr(x0, y0, x, y, vfx, method = "bilinear")
 interpolated value at x0 and y0
 }
 \description{
-Function for bilinear and simplical interpolation
+Function for bilinear and simplical interpolation in 2D
 }

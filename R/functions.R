@@ -93,7 +93,7 @@ chebpred <- function(x0, y0, coefmat, lb, ub){
   return(pxy)
 }
 
-#' Function for bilinear and simplical interpolation
+#' Function for bilinear and simplical interpolation in 2D
 #'
 #' @param x0 coordinate for interpolation
 #' @param y0 coordinate for interpolation
@@ -137,4 +137,50 @@ simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
     }
   }
   return(vp)
+}
+
+#' Function for simplical interpolation in 3
+#'
+#' @param x0 coordinates of point for interpolation
+#' @param x matrix with x(i, j) the coordinate of point i in dimension j - must be a crossing
+#' @param vfx function values at each x
+#' @return interpolated value at x0
+#' @export
+
+complexr <- function(x0, x, vfx){
+  closestpts = vector(mode = "list", length =3)
+  ## find closest points in x
+  for (i in c(1:3)) {
+    xvals = sort(unique(x[,i]))
+    xi = findInterval(x0[i], xvals, all.inside = TRUE)
+    closestpts[[i]] = c(xvals[xi], xvals[xi+1])
+  }
+  ## function vals at vertices
+  d = tidyr::crossing(x = closestpts[[1]], y = closestpts[[2]], z = closestpts[[3]])
+  d$v = 0
+  for (i in c(1:nrow(d))) {
+    d$v[i] = vfx[x[,1]==d$x[i] & x[,2]==d$y[i] & x[,3]==d$z[i]]
+  }
+
+  ### change of variables
+  xp = (x0[1]-closestpts[[1]][1])/(closestpts[[1]][2] - closestpts[[1]][1])
+  yp = (x0[2]-closestpts[[2]][1])/(closestpts[[2]][2] - closestpts[[2]][1])
+  zp = (x0[3]-closestpts[[3]][1])/(closestpts[[3]][2] - closestpts[[3]][1])
+  xcv = c(xp,yp,zp)
+
+  ### algorithm
+  p = order(xcv)
+  s = vector(mode = "list", length = 4)
+  fs = vector(mode = "list", length = 4)
+  s[[1]] = rep(1, 3)
+  fs[[1]] = vfx[x[,1]==s[[1]][1] & x[,2]==s[[1]][2] & x[,3]==s[[1]][3]]
+  for (i in c(2:4)) {
+    svec = rep(0, 3)
+    svec[p[i-1]] = 1
+    s[[i]] = s[[i-1]] - svec
+    f = vfx[x[,1]==s[[i]][1] & x[,2]==s[[i]][2] & x[,3]==s[[i]][3]]
+    f2 = vfx[x[,1]==s[[i-1]][1] & x[,2]==s[[i-1]][2] & x[,3]==s[[i-1]][3]]
+    fs[[i]] = fs[[i-1]] + (1 - xcv[p[i-1]])*(f - f2)
+  }
+  return(fs[[4]])
 }
