@@ -1,12 +1,12 @@
 Package: flatlandr
-Title: Chebyshev polynomial interpolation in 2 dimensions
+Title: Interpolation functions for multiple dimensional data
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Matthew",
            family = "Gordon",
            role = c("aut", "cre"),
            email = "mdgordo@gmail.com")
-Description: Chebyshev polynomial interpolation in 2 dimensions.
+Description: Fast interpolation in 2 and 3 dimensions.
 License: MIT + file LICENSE
 Imports: 
     tidyr
