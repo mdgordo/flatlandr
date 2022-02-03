@@ -125,11 +125,17 @@ simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
     ## change of variables
     xp = -1 + 2*(x0-x1)/(x2-x1)
     yp = -1 + 2*(y0-y1)/(y2-y1)
+    if (xp>1 | xp<-1 | yp>1 | yp<-1) print("Warning: Point outside boundary, applying constant extrapolation")
+    if (xp>1) xp = 1 else if (xp <-1) xp = -1
+    if (yp>1) yp = 1 else if (yp <-1) yp = -1
     vp = .25*(v1*(1-xp)*(1-yp) + v2*(1-xp)*(1+yp) + v3*(1+xp)*(1-yp) + v4*(1+xp)*(1+yp))
   } else {
     ### change of variables
     xp = (x0-x1)/(x2-x1)
     yp = (y0-y1)/(y2-y1)
+    if (xp>1 | xp<0 | yp>1 | yp<0) print("Warning: Point outside boundary, applying constant extrapolation")
+    if (xp>1) xp = 1 else if (xp <0) xp = 0
+    if (yp>1) yp = 1 else if (yp <0) yp = 0
     if (xp+yp <= 1) {
       vp = v1*(1-xp-yp) + v2*yp + v3*xp
     } else {
@@ -165,6 +171,9 @@ complexr <- function(x0, x, vfx){
   ### change of variables
   xp = (x0[1]-closestpts[[1]][1])/(closestpts[[1]][2] - closestpts[[1]][1])
   yp = (x0[2]-closestpts[[2]][1])/(closestpts[[2]][2] - closestpts[[2]][1])
+  if (xp>1 | xp<0 | yp>1 | yp<0) print("Warning: Point outside boundary, applying constant extrapolation")
+  if (xp>1) xp = 1 else if (xp <0) xp = 0
+  if (yp>1) yp = 1 else if (yp <0) yp = 0
   zp = (x0[3]-closestpts[[3]][1])/(closestpts[[3]][2] - closestpts[[3]][1])
   xcv = c(xp,yp,zp)
 
