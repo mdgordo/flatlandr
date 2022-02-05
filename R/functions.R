@@ -104,7 +104,7 @@ chebpred <- function(x0, y0, coefmat, lb, ub){
 #' @return interpolated value at x0 and y0
 #' @export
 
-simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
+simplr <- function(x0, y0, x, y, vfx, method = "bilinear", extrapolation.warning = TRUE){
   ## find closest points
   xvals = sort(unique(x))
   xi = findInterval(x0, xvals, all.inside = TRUE)
@@ -114,6 +114,10 @@ simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
   yi = findInterval(y0, yvals, all.inside = TRUE)
   y1 = yvals[yi]
   y2 = yvals[yi+1]
+  if ((x0>max(x) | x0<min(x) | y0>max(y) | y0<min(y)) & extrapolation.warning = TRUE) {
+    print("Warning: Point outside boundary, applying constant extrapolation")}
+  if (x0>max(x)) x0 = max(x) else if (x0<min(x)) x0 = min(x)
+  if (y0>max(y)) y0 = max(y) else if (y0<min(y)) y0 = min(y)
 
   ## function vals at corners
   v1 = vfx[which(x==x1 & y==y1)]
@@ -125,17 +129,11 @@ simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
     ## change of variables
     xp = -1 + 2*(x0-x1)/(x2-x1)
     yp = -1 + 2*(y0-y1)/(y2-y1)
-    if (xp>1 | xp<-1 | yp>1 | yp<-1) print("Warning: Point outside boundary, applying constant extrapolation")
-    if (xp>1) xp = 1 else if (xp <-1) xp = -1
-    if (yp>1) yp = 1 else if (yp <-1) yp = -1
     vp = .25*(v1*(1-xp)*(1-yp) + v2*(1-xp)*(1+yp) + v3*(1+xp)*(1-yp) + v4*(1+xp)*(1+yp))
   } else {
     ### change of variables
     xp = (x0-x1)/(x2-x1)
     yp = (y0-y1)/(y2-y1)
-    if (xp>1 | xp<0 | yp>1 | yp<0) print("Warning: Point outside boundary, applying constant extrapolation")
-    if (xp>1) xp = 1 else if (xp <0) xp = 0
-    if (yp>1) yp = 1 else if (yp <0) yp = 0
     if (xp+yp <= 1) {
       vp = v1*(1-xp-yp) + v2*yp + v3*xp
     } else {
@@ -153,13 +151,16 @@ simplr <- function(x0, y0, x, y, vfx, method = "bilinear"){
 #' @return interpolated value at x0
 #' @export
 
-complexr <- function(x0, x, vfx){
+complexr <- function(x0, x, vfx, extrapolation.warning = TRUE){
   closestpts = vector(mode = "list", length =3)
   ## find closest points in x
   for (i in c(1:3)) {
     xvals = sort(unique(x[,i]))
     xi = findInterval(x0[i], xvals, all.inside = TRUE)
     closestpts[[i]] = c(xvals[xi], xvals[xi+1])
+    if ((x0[i]>max(x[,i]) | x0[i]<min(x[,i])) & extrapolation.warning = TRUE) {
+      print("Warning: Point outside boundary, applying constant extrapolation")}
+    if (x0[i]>max(x[,i])) x0[i]=max(x[,i]) else if (x0[i]<min(x[,i])) x0[i]=min(x[,i])
   }
   ## function vals at vertices
   d = tidyr::crossing(x = closestpts[[1]], y = closestpts[[2]], z = closestpts[[3]])
@@ -171,9 +172,6 @@ complexr <- function(x0, x, vfx){
   ### change of variables
   xp = (x0[1]-closestpts[[1]][1])/(closestpts[[1]][2] - closestpts[[1]][1])
   yp = (x0[2]-closestpts[[2]][1])/(closestpts[[2]][2] - closestpts[[2]][1])
-  if (xp>1 | xp<0 | yp>1 | yp<0) print("Warning: Point outside boundary, applying constant extrapolation")
-  if (xp>1) xp = 1 else if (xp <0) xp = 0
-  if (yp>1) yp = 1 else if (yp <0) yp = 0
   zp = (x0[3]-closestpts[[3]][1])/(closestpts[[3]][2] - closestpts[[3]][1])
   xcv = c(xp,yp,zp)
 
