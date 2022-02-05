@@ -114,7 +114,7 @@ simplr <- function(x0, y0, x, y, vfx, method = "bilinear", extrapolation.warning
   yi = findInterval(y0, yvals, all.inside = TRUE)
   y1 = yvals[yi]
   y2 = yvals[yi+1]
-  if ((x0>max(x) | x0<min(x) | y0>max(y) | y0<min(y)) & extrapolation.warning = TRUE) {
+  if ((x0>max(x) | x0<min(x) | y0>max(y) | y0<min(y)) & extrapolation.warning) {
     print("Warning: Point outside boundary, applying constant extrapolation")}
   if (x0>max(x)) x0 = max(x) else if (x0<min(x)) x0 = min(x)
   if (y0>max(y)) y0 = max(y) else if (y0<min(y)) y0 = min(y)
@@ -158,7 +158,7 @@ complexr <- function(x0, x, vfx, extrapolation.warning = TRUE){
     xvals = sort(unique(x[,i]))
     xi = findInterval(x0[i], xvals, all.inside = TRUE)
     closestpts[[i]] = c(xvals[xi], xvals[xi+1])
-    if ((x0[i]>max(x[,i]) | x0[i]<min(x[,i])) & extrapolation.warning = TRUE) {
+    if ((x0[i]>max(x[,i]) | x0[i]<min(x[,i])) & extrapolation.warning) {
       print("Warning: Point outside boundary, applying constant extrapolation")}
     if (x0[i]>max(x[,i])) x0[i]=max(x[,i]) else if (x0[i]<min(x[,i])) x0[i]=min(x[,i])
   }
